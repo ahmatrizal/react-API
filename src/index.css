@@ -10,6 +10,11 @@ body {
   background-color: #446682;
 }
 
+.categori-aktif {
+  margin-left: 20px;
+  color: #446682
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

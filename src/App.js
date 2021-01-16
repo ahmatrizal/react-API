@@ -17,11 +17,26 @@ export default class index extends Component {
 
     this.state = {
       menus:[],
+      categoriAktif : "Makanan"
+      
     }
   }
 
   componentDidMount() {
-    axios.get(API_URL+"products")
+    axios.get(API_URL+"products?category.nama="+this.state.categoriAktif)
+      .then(res => {
+        const menus = res.data;
+        this.setState({ menus });
+      })
+  }
+
+
+  changeCategori = (value) => {
+    this.setState({
+      categoriAktif : value,
+      menus : []
+    })
+    axios.get(API_URL+"products?category.nama=" + value)
       .then(res => {
         const menus = res.data;
         this.setState({ menus });
@@ -29,14 +44,14 @@ export default class index extends Component {
   }
 
   render() {
-    const { menus } = this.state;
+    const { menus, categoriAktif } = this.state;
     return (
       <div className="App">
         <Navbar />
         <div className="mt-3">
           <Container fluid>
           <Row>
-            <Category />
+            <Category changeCategori={this.changeCategori} categoriAktif={categoriAktif} />
             <Col>
               <h4>Daftar Product</h4>
               <hr />
