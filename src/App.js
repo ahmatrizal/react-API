@@ -7,7 +7,9 @@ import Navbar from './components/NavbarComponent'
 import Category from './components/ListCategory'
 import Hasil from './components/Hasil'
 import Menus from './components/Menus'
+
 import { API_URL } from './utils/constants'
+import swal from 'sweetalert'
 
 
 export default class index extends Component {
@@ -17,19 +19,38 @@ export default class index extends Component {
 
     this.state = {
       menus:[],
-      categoriAktif : "Makanan"
+      categoriAktif : "Makanan",
+      keranjangs : []
       
     }
   }
 
   componentDidMount() {
+    //Product by Category
     axios.get(API_URL+"products?category.nama="+this.state.categoriAktif)
       .then(res => {
         const menus = res.data;
         this.setState({ menus });
       })
+
+    //KeranjangBelanja
+    axios.get(API_URL+"keranjangs")
+      .then(res => {
+        const keranjangs = res.data;
+        this.setState({ keranjangs });
+      })
   }
 
+  componentDidUpdate (prevState) {
+      if (this.state.keranjangs !== prevState.keranjangs){
+        axios.get(API_URL+"keranjangs")
+      .then(res => {
+        const keranjangs = res.data;
+        this.setState({ keranjangs });
+      })
+      }
+
+    }
 
   changeCategori = (value) => {
     this.setState({
@@ -43,8 +64,51 @@ export default class index extends Component {
       })
   }
 
+  inputKeranjang = (value) => {
+
+    axios.get(API_URL+"keranjangs?product.id=" + value.id)
+      .then((res) => {
+        if ( res.data.length === 0) {
+          const keranjangBelanja = {
+            jumlah : 1,
+            total_harga : value.harga,
+            product : value
+          }
+
+          axios.post(API_URL+"keranjangs" , keranjangBelanja)
+            .then((res)=> {
+              swal({
+                title: "Success!",
+                text: keranjangBelanja.product.nama + " in to ShoppingChard!",
+                icon: "success",
+                button: false,
+                timer: 2000
+      });
+      })
+        } else {
+           const keranjangBelanja = {
+            jumlah : res.data[0].jumlah + 1,
+            total_harga : res.data[0].total_harga + value.harga,
+            product : value
+          }
+          axios.put(API_URL+"keranjangs/" + res.data[0].id , keranjangBelanja)
+            .then((res) => {
+              swal({
+                title: "Success!",
+                text: keranjangBelanja.product.nama + " One Again in to ShoppingChard!",
+                icon: "success",
+                button: false,
+                timer: 2000
+      });
+      })
+      }})
+      }
+
+    
+  
+
   render() {
-    const { menus, categoriAktif } = this.state;
+    const { menus, categoriAktif, keranjangs } = this.state;
     return (
       <div className="App">
         <Navbar />
@@ -60,11 +124,13 @@ export default class index extends Component {
                 <Menus 
                   key={menu.id}
                   menu={menu}
+                  inputKeranjang={this.inputKeranjang}
                 />
               ))}
               </Row>
             </Col>
-            <Hasil />
+            <Hasil keranjangs={keranjangs} />
+            
           </Row>   
         </Container>
         </div>
