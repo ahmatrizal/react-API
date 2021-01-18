@@ -1,144 +1,27 @@
 import React, { Component } from 'react'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Col, Row, Container } from 'react-bootstrap'
-import axios from 'axios'
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+} from "react-router-dom";
 
-import Navbar from './components/NavbarComponent'
-import Category from './components/ListCategory'
-import Hasil from './components/Hasil'
-import Menus from './components/Menus'
+import Navbar from '../src/components/NavbarComponent'
+import {Home,Sukses} from './pages/Index'
 
-import { API_URL } from './utils/constants'
-import swal from 'sweetalert'
-
-
-export default class index extends Component {
-
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      menus:[],
-      categoriAktif : "Makanan",
-      keranjangs : []
-      
-    }
-  }
-
-  componentDidMount() {
-    //Product by Category
-    axios.get(API_URL+"products?category.nama="+this.state.categoriAktif)
-      .then(res => {
-        const menus = res.data;
-        this.setState({ menus });
-      })
-
-    //KeranjangBelanja
-    axios.get(API_URL+"keranjangs")
-      .then(res => {
-        const keranjangs = res.data;
-        this.setState({ keranjangs });
-      })
-  }
-
-  componentDidUpdate (prevState) {
-      if (this.state.keranjangs !== prevState.keranjangs){
-        axios.get(API_URL+"keranjangs")
-      .then(res => {
-        const keranjangs = res.data;
-        this.setState({ keranjangs });
-      })
-      }
-
-    }
-
-  changeCategori = (value) => {
-    this.setState({
-      categoriAktif : value,
-      menus : []
-    })
-    axios.get(API_URL+"products?category.nama=" + value)
-      .then(res => {
-        const menus = res.data;
-        this.setState({ menus });
-      })
-  }
-
-  inputKeranjang = (value) => {
-
-    axios.get(API_URL+"keranjangs?product.id=" + value.id)
-      .then((res) => {
-        if ( res.data.length === 0) {
-          const keranjangBelanja = {
-            jumlah : 1,
-            total_harga : value.harga,
-            product : value
-          }
-
-          axios.post(API_URL+"keranjangs" , keranjangBelanja)
-            .then((res)=> {
-              swal({
-                title: "Success!",
-                text: keranjangBelanja.product.nama + " in to ShoppingChard!",
-                icon: "success",
-                button: false,
-                timer: 2000
-      });
-      })
-        } else {
-           const keranjangBelanja = {
-            jumlah : res.data[0].jumlah + 1,
-            total_harga : res.data[0].total_harga + value.harga,
-            product : value
-          }
-          axios.put(API_URL+"keranjangs/" + res.data[0].id , keranjangBelanja)
-            .then((res) => {
-              swal({
-                title: "Success!",
-                text: keranjangBelanja.product.nama + " One Again in to ShoppingChard!",
-                icon: "success",
-                button: false,
-                timer: 2000
-      });
-      })
-      }})
-      }
-
-    
-  
-
+export default class App extends Component {
   render() {
-    const { menus, categoriAktif, keranjangs } = this.state;
     return (
-      <div className="App">
+      <BrowserRouter>
         <Navbar />
-        <div className="mt-3">
-          <Container fluid>
-          <Row>
-            <Category changeCategori={this.changeCategori} categoriAktif={categoriAktif} />
-            <Col>
-              <h4>Daftar Product</h4>
-              <hr />
-            <Row>
-              {menus && menus.map((menu) => (
-                <Menus 
-                  key={menu.id}
-                  menu={menu}
-                  inputKeranjang={this.inputKeranjang}
-                />
-              ))}
-              </Row>
-            </Col>
-            <Hasil keranjangs={keranjangs} />
-            
-          </Row>   
-        </Container>
-        </div>
-      </div>
-        
-        
-      
-    );
+          <main>
+            <Switch>
+              <Route path="/" component={Home} exact />
+              <Route path="/sukses" component={Sukses} exact />
 
+            </Switch>
+          </main>
+      </BrowserRouter>
+
+    )
   }
-  }
+}

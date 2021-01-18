@@ -11,8 +11,13 @@ body {
 }
 
 .categori-aktif {
+  background-color: #446682;
   margin-left: 20px;
   color: #446682
+}
+
+.btn-primary {
+  background-color: #446682;
 }
 
 code {
