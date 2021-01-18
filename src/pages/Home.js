@@ -3,10 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Col, Row, Container } from 'react-bootstrap'
 import axios from 'axios'
 
-import Navbar from '../components/NavbarComponent'
 import Category from '../components/ListCategory'
 import Hasil from '../components/Hasil'
 import Menus from '../components/Menus'
+import TotalBayar from '../components/TotalBayar'
 
 import { API_URL } from '../utils/constants'
 import swal from 'sweetalert'
@@ -129,7 +129,10 @@ export default class Home extends Component {
             </Col>
             <Hasil keranjangs={keranjangs} />
             
-          </Row>   
+          </Row> 
+          <Row>
+            <TotalBayar keranjangs={keranjangs} {...this.props}/>
+            </Row>  
         </Container>
         </div>
         
