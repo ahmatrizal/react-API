@@ -26,7 +26,9 @@ export default class TotalBayar extends Component {
         return result + item.total_harga
         }, 0);
         return (
-            <div className="fixed-bottom" >
+           <>
+           {/* Web */}
+            <div className="fixed-bottom d-none d-md-block" >
                 <Row>
                      <Col className="px-4" md={{ span :3, offset: 9}}>
                          <h5>Total Harga : <strong className="float-right mr-2">Rp {numberWithCommas(totalBayar)}</strong></h5>
@@ -35,6 +37,18 @@ export default class TotalBayar extends Component {
                     </Col>
                 </Row>
             </div>
+          
+            {/* Mobile */}
+            <div className="d-sm-block d-md-none"  >
+                <Row>
+                     <Col className="px-4" md={{ span :3, offset: 9}}>
+                         <h5>Total Harga : <strong className="float-right mr-2">Rp {numberWithCommas(totalBayar)}</strong></h5>
+                    <Button variant="primary" block className="mb-2 mt-2 mr-2" onClick={() => this.submitTotalBayar(totalBayar)}>
+                        <FontAwesomeIcon icon={faShoppingCart} /> Payment</Button>
+                    </Col>
+                </Row>
+            </div>
+           </>
         )
     }
 }

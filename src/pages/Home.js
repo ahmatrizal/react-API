@@ -34,14 +34,10 @@ export default class Home extends Component {
       })
 
     //KeranjangBelanja
-    axios.get(API_URL+"keranjangs")
-      .then(res => {
-        const keranjangs = res.data;
-        this.setState({ keranjangs });
-      })
+   this.getListKeranjang()
   }
 
-  componentDidUpdate (prevState) {
+/*   componentDidUpdate (prevState) {
       if (this.state.keranjangs !== prevState.keranjangs){
         axios.get(API_URL+"keranjangs")
       .then(res => {
@@ -50,7 +46,15 @@ export default class Home extends Component {
       })
       }
 
-    }
+    } */
+
+  getListKeranjang = () => {
+    axios.get(API_URL+"keranjangs")
+      .then(res => {
+        const keranjangs = res.data;
+        this.setState({ keranjangs });
+      })
+  }
 
   changeCategori = (value) => {
     this.setState({
@@ -77,6 +81,7 @@ export default class Home extends Component {
 
           axios.post(API_URL+"keranjangs" , keranjangBelanja)
             .then((res)=> {
+              this.getListKeranjang()
               swal({
                 title: "Success!",
                 text: keranjangBelanja.product.nama + " in to ShoppingChard!",
@@ -117,7 +122,7 @@ export default class Home extends Component {
             <Col>
               <h4>Menu Product</h4>
               <hr />
-            <Row>
+            <Row className="overflow-auto menu">
               {menus && menus.map((menu) => (
                 <Menus 
                   key={menu.id}
@@ -127,7 +132,7 @@ export default class Home extends Component {
               ))}
               </Row>
             </Col>
-            <Hasil keranjangs={keranjangs} />
+            <Hasil keranjangs={keranjangs} getListKeranjang={this.getListKeranjang} />
             
           </Row> 
           <Row>

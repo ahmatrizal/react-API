@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Col, Row, ListGroup, Badge } from 'react-bootstrap'
+import { Col, Row, ListGroup, Badge, Card } from 'react-bootstrap'
 import {numberWithCommas} from '../utils/formatNumber'
 import ModalKeranjang from './ModalKeranjang'
 import TotalBayar from './TotalBayar'
@@ -73,6 +73,7 @@ export default class Hasil extends Component {
 
           axios.put(API_URL+"keranjangs/" + this.state.keranjangDetail.id , data)
             .then((res)=> {
+                this.props.getListKeranjang()
               swal({
                 title: "Success!",
                 text: data.product.nama + " Done to Update",
@@ -88,6 +89,7 @@ export default class Hasil extends Component {
     
           axios.delete(API_URL+"keranjangs/" + id)
             .then((res)=> {
+                this.props.getListKeranjang()
               swal({
                 title: "Delete!",
                 text: this.state.keranjangDetail.product.nama + " Delete",
@@ -103,6 +105,7 @@ export default class Hasil extends Component {
             <Col md={3} mt='2'>
             <h4>ShoppingCart</h4>
             <hr />
+            <Card className="overflow-auto hasil">
             <ListGroup variant="flush">
                 {keranjangs && keranjangs.map((keranjang) => (
                     <ListGroup.Item key={keranjang.id} onClick={() => this.handleShow(keranjang)}>
@@ -133,6 +136,7 @@ export default class Hasil extends Component {
                 />
                 
                 </ListGroup>
+                </Card>
                 <TotalBayar keranjangs={keranjangs} {...this.props}/>
             </Col>
         )
