@@ -4,7 +4,18 @@ import React from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
 import { numberWithCommas } from '../utils/formatNumber'
 
-const ModalKeranjang = ({ showModal, handleClose, keranjangDetail, jumlah, keterangan, tombolJumlah, tombolKurang, changeHandler, handleSubmit}) => {
+const ModalKeranjang = ({ 
+     showModal,
+     handleClose, 
+     keranjangDetail, 
+     jumlah, 
+     keterangan, 
+     tombolJumlah, 
+     tombolKurang, 
+     changeHandler, 
+     handleSubmit,
+     hapusPesanan,
+     totalHarga}) => {
     if (keranjangDetail) {
 
         return (
@@ -13,29 +24,34 @@ const ModalKeranjang = ({ showModal, handleClose, keranjangDetail, jumlah, keter
                     <Modal.Header closeButton>
                     <Modal.Title>
                         {keranjangDetail.product.nama}
-                        <p>Rp {numberWithCommas(keranjangDetail.product.harga)}</p>
+                        <p>(Rp {numberWithCommas(keranjangDetail.product.harga)})</p>
                     </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form onSubmit={handleSubmit}>
                             <Form.Group >
                                 <Form.Label>Total Harga :</Form.Label>
-                                <strong>Rp {numberWithCommas(keranjangDetail.total_harga)}</strong>
+                                <strong> Rp {numberWithCommas(totalHarga)}</strong>
                             </Form.Group>
                              <Form.Group >
                                 <Form.Label>Jumlah :</Form.Label>
                                 <br />
-                                    <Button variant="primary" size='sm' className="mr-2" onClick={() => tombolJumlah()}>
-                                        <FontAwesomeIcon icon={faPlus} />
+                                    <Button variant="primary" size="sm" className="mr-2" onClick={() => tombolKurang()}>
+                                        <FontAwesomeIcon icon={faMinus} />
                                     </Button>
                                     {jumlah}
-                                    <Button variant="primary" size="sm" className="ml-2" onClick={() => tombolKurang()}>
-                                        <FontAwesomeIcon icon={faMinus} />
+                                    <Button variant="primary" size='sm' className="ml-2" onClick={() => tombolJumlah()}>
+                                        <FontAwesomeIcon icon={faPlus} />
                                     </Button>
                             </Form.Group>
                             <Form.Group controlId="exampleForm.ControlTextarea1">
                                 <Form.Label>Keterangan</Form.Label>
-                                <Form.Control as="textarea" rows={3} name="keterangan" onChange={changeHandler} placeholder="Contoh: Pedas, Nasi setengah" value={keterangan}/>
+                                <Form.Control as="textarea"
+                                 rows={3} 
+                                 name="keterangan" 
+                                 onChange={changeHandler} 
+                                 placeholder="Contoh: Pedas, Nasi setengah" 
+                                 value={keterangan}/>
                             </Form.Group>
                             <Button variant="primary" type="submit">
                                <FontAwesomeIcon icon={faSave}/> Save
@@ -44,7 +60,7 @@ const ModalKeranjang = ({ showModal, handleClose, keranjangDetail, jumlah, keter
 
                     </Modal.Body>
                     <Modal.Footer>
-                    <Button variant="danger">
+                    <Button variant="danger" onClick={() => hapusPesanan(keranjangDetail.id)}>
                         <FontAwesomeIcon icon={faTrash} /> Delete Order
                     </Button>
                     </Modal.Footer>

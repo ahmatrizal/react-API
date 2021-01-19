@@ -115,7 +115,7 @@ export default class Home extends Component {
           <Row>
             <Category changeCategori={this.changeCategori} categoriAktif={categoriAktif} />
             <Col>
-              <h4>Daftar Product</h4>
+              <h4>Menu Product</h4>
               <hr />
             <Row>
               {menus && menus.map((menu) => (

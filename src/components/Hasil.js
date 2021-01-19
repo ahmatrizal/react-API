@@ -4,6 +4,10 @@ import {numberWithCommas} from '../utils/formatNumber'
 import ModalKeranjang from './ModalKeranjang'
 import TotalBayar from './TotalBayar'
 
+import { API_URL } from '../utils/constants'
+import swal from 'sweetalert'
+import axios from 'axios'
+
 export default class Hasil extends Component {
 
     constructor(props) {
@@ -22,7 +26,8 @@ export default class Hasil extends Component {
             showModal : true,
             keranjangDetail : keranjang,
             jumlah : keranjang.jumlah,
-            keterangan : keranjang.keterangan
+            keterangan : keranjang.keterangan,
+            totalHarga : keranjang.total_harga
         })
     }
 
@@ -34,14 +39,16 @@ export default class Hasil extends Component {
 
     tombolJumlah = () => {
         this.setState({
-            jumlah : this.state.jumlah + 1
+            jumlah : this.state.jumlah + 1,
+            totalHarga : this.state.keranjangDetail.product.harga * (this.state.jumlah + 1)
         })
     }
 
     tombolKurang = () => {
         if ( this.state.jumlah !== 1) {
         this.setState({
-            jumlah : this.state.jumlah - 1
+            jumlah : this.state.jumlah - 1,
+            totalHarga : this.state.keranjangDetail.product.harga * (this.state.jumlah - 1)
         })
     }
     }
@@ -54,15 +61,47 @@ export default class Hasil extends Component {
     
     handleSubmit = (e) => {
         e.preventDefault()
+
+        this.handleClose()
        
-        console.log("oo")
-    }
+     const data = {
+            jumlah : this.state.jumlah,
+            total_harga : this.state.totalHarga,
+            product : this.state.keranjangDetail.product,
+            keterangan : this.state.keterangan
+          }
+
+          axios.put(API_URL+"keranjangs/" + this.state.keranjangDetail.id , data)
+            .then((res)=> {
+              swal({
+                title: "Success!",
+                text: data.product.nama + " Done to Update",
+                icon: "success",
+                button: false,
+                timer: 2000
+      });
+    })}
+
+    hapusPesanan = (id) => {
+
+        this.handleClose()
+    
+          axios.delete(API_URL+"keranjangs/" + id)
+            .then((res)=> {
+              swal({
+                title: "Delete!",
+                text: this.state.keranjangDetail.product.nama + " Delete",
+                icon: "error",
+                button: false,
+                timer: 2000
+      });
+    })}
 
     render() {
         const { keranjangs } = this.props
         return (
             <Col md={3} mt='2'>
-            <h4>Hasil</h4>
+            <h4>ShoppingCart</h4>
             <hr />
             <ListGroup variant="flush">
                 {keranjangs && keranjangs.map((keranjang) => (
@@ -90,6 +129,7 @@ export default class Hasil extends Component {
                 tombolKurang={this.tombolKurang}
                 changeHandler={this.changeHandler}
                 handleSubmit={this.handleSubmit}
+                hapusPesanan={this.hapusPesanan}
                 />
                 
                 </ListGroup>
